@@ -1,5 +1,4 @@
-Klar — ich schreibe dir eine **saubere, schulprojekt-taugliche README**, die du direkt auf GitHub nutzen kannst.
-Du kannst sie 1:1 kopieren.
+
 
 ---
 
