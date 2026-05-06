@@ -1,0 +1,150 @@
+<!-- <!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌱 Plant Control</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>🌱 Smart Plant Dashboard</h1>
+
+<div class="container">
+
+  <div class="card">
+    <h3>🌡 Temperatur</h3>
+    <div id="temp" class="value">--</div>
+  </div>
+
+  <div class="card">
+    <h3>💧 Feuchtigkeit</h3>
+    <div id="hum" class="value">--</div>
+  </div>
+
+  <div class="card">
+    <h3>☀️ Licht</h3>
+    <div id="lux" class="value">--</div>
+  </div>
+
+</div>
+
+<button id="waterBtn">💦 Gießen</button>
+
+<div id="status" class="status"></div>
+
+<button id="statsBtn">📊 Statistik</button>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span id="closeModal">&times;</span>
+
+    <h2>📊 Pflanzen Statistik</h2>
+
+    <div class="charts-grid">
+
+      <div class="chart-card">
+        <h3>🌡 Temperatur</h3>
+        <canvas id="chartTemp"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>💧 Feuchtigkeit</h3>
+        <canvas id="chartHum"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>☀️ Licht</h3>
+        <canvas id="chartLux"></canvas>
+      </div>
+
+    </div>
+
+    <div id="warningsBox"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+<script src="app.js"></script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌱 Plant Control</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>🌱 Smart Plant Dashboard</h1>
+
+<div class="container">
+
+  <div class="card">
+    <h3>🌡 Temperatur</h3>
+    <div id="temp" class="value">--</div>
+  </div>
+
+  <div class="card">
+    <h3>💧 Feuchtigkeit</h3>
+    <div id="hum" class="value">--</div>
+  </div>
+
+  <div class="card">
+    <h3>☀️ Licht</h3>
+    <div id="lux" class="value">--</div>
+  </div>
+
+</div>
+
+<button id="waterBtn">💦 Gießen</button>
+
+<div id="status" class="status"></div>
+
+<button id="statsBtn">📊 Statistik</button>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+
+    <span id="closeModal">&times;</span>
+
+    <h2>📊 Pflanzen Statistik</h2>
+
+    <div class="charts-grid">
+
+      <div class="chart-card">
+        <h3>🌡 Temperatur</h3>
+        <canvas id="chartTemp"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>💧 Feuchtigkeit</h3>
+        <canvas id="chartHum"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>☀️ Licht</h3>
+        <canvas id="chartLux"></canvas>
+      </div>
+
+    </div>
+
+    <div id="warningsBox"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
