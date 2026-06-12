@@ -3,7 +3,8 @@
 ========================= */
 
 // Backend API (Node-RED)
-const API = "http://localhost:1880";
+//const API = "http://localhost:1880";
+const API = "http://172.30.135.123:1880";
 
 // Grenzwerte für Pflanzenzustand
 const LIMITS = {
@@ -23,6 +24,12 @@ const luxEl = document.getElementById("lux");
 
 const statusEl = document.getElementById("status");
 const waterBtn = document.getElementById("waterBtn");
+const pumpBtn = document.getElementById("pumpBtn");
+
+pumpBtn.addEventListener(
+    "click",
+    togglePump
+);
 
 const statsBtn = document.getElementById("statsBtn");
 const modal = document.getElementById("modal");
@@ -99,8 +106,51 @@ async function water() {
   try {
     await fetch(API + "/api/water", { method: "POST" });
     statusEl.innerText = "💦 Bewässerung gestartet!";
+
   } catch (e) {
     statusEl.innerText = "❌ Fehler beim Gießen";
+  }
+}
+
+async function togglePump() {
+  try {
+    const response = await fetch(
+      API + "/api/togglePump",
+      {
+        method: "POST"
+      }
+    );
+
+    const result = await response.json();
+
+    if(result.success){
+      statusEl.innerText = "💦 Pumpe umgeschaltet";
+    }
+
+  } catch(e) {
+    statusEl.innerText = "❌ Fehler beim Schalten";
+  }
+}
+
+
+async function togglePump() {
+  try {
+    const response = await fetch(API + "/api/togglePump", {
+      method: "POST"
+    });
+
+    if (!response.ok) {
+      throw new Error("HTTP Error");
+    }
+
+    const result = await response.json();
+
+    statusEl.innerText =
+      result.message || "💦 Pumpe umgeschaltet";
+
+  } catch (e) {
+    console.error(e);
+    statusEl.innerText = "❌ Fehler beim Schalten";
   }
 }
 
