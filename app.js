@@ -3,15 +3,23 @@
 ========================= */
 
 // Backend API (Node-RED)
-//const API = "http://localhost:1880";
-const API = "http://172.30.135.123:1880";
+const API = "http://localhost:1880";
+//const API = "http://172.30.120.166:1880";
 
 // Grenzwerte für Pflanzenzustand
 const LIMITS = {
   temp: { min: 10, max: 30 },
   hum: { min: 30, max: 70 },
-  lux: { min: 200 }
+  lux: { min: 200 },
+  co2: {max: 1500}
 };
+
+// const LIMITS = {
+//   temp: { min: 30, max: 40 },
+//   hum: { min: 40, max: 70 },
+//   lux: { min: 200 },
+//   co2: {max: 1500}
+// };
 
 
 /* =========================
@@ -21,20 +29,17 @@ const LIMITS = {
 const tempEl = document.getElementById("temp");
 const humEl = document.getElementById("hum");
 const luxEl = document.getElementById("lux");
+const co2El = document.getElementById("co2");
 
 const statusEl = document.getElementById("status");
 const waterBtn = document.getElementById("waterBtn");
-const pumpBtn = document.getElementById("pumpBtn");
 
-pumpBtn.addEventListener(
-    "click",
-    togglePump
-);
+const tempCard = document.querySelector(".card:nth-child(1)");
+const humCard  = document.querySelector(".card:nth-child(2)");
+const luxCard  = document.querySelector(".card:nth-child(3)");
+const co2Card  = document.querySelector(".card:nth-child(4)");
 
-const statsBtn = document.getElementById("statsBtn");
-const modal = document.getElementById("modal");
-const closeModal = document.getElementById("closeModal");
-
+const chamomile = document.getElementById("chamomile");
 
 /* =========================
     NOTIFICATIONS SYSTEM
@@ -71,6 +76,16 @@ if ("Notification" in window) {
    LIVE SENSOR DATA
 ========================= */
 
+// function setCardState(card, isGood) {
+//   card.classList.remove("good", "bad");
+//   card.classList.add(isGood ? "good" : "bad");
+// }
+
+function setCardState(card, level) {
+  card.classList.remove("good", "warn", "bad");
+  card.classList.add(level);
+}
+
 /**
  * Holt aktuelle Sensordaten vom Backend
  * und aktualisiert das UI
@@ -80,19 +95,126 @@ async function loadData() {
     const res = await fetch(API + "/api/sensor");
     const data = await res.json();
 
+    // Werte extrahieren (WICHTIG!)
+    const temp = data.temperature;
+    const hum  = data.humidity;
+    const lux  = data.lux;
+    const co2  = data.co2;
+
     // UI Update
-    tempEl.innerText = data.temperature + " °C";
-    humEl.innerText = data.humidity + " %";
-    luxEl.innerText = data.lux + " lux";
+    tempEl.innerText = temp + " °C";
+    humEl.innerText = hum + " %";
+    luxEl.innerText = lux + " lux";
+    co2El.innerText = co2 + " ppm";
+
+    // Temperatur
+    setCardState(
+      tempCard,
+      temp >= LIMITS.temp.min && temp <= LIMITS.temp.max ? "good" : "bad"
+    );
+
+    // Feuchtigkeit
+    setCardState(
+      humCard,
+      hum >= LIMITS.hum.min && hum <= LIMITS.hum.max ? "good" : "bad"
+    );
+
+    // Licht
+    setCardState(
+      luxCard,
+      lux >= LIMITS.lux.min ? "good" : "bad"
+    );
+
+    // CO2
+    setCardState(
+      co2Card,
+      co2 <= LIMITS.co2.max ? "good" : "bad"
+    );
 
     // Status Anzeige
     statusEl.innerText =
-      data.status ? "💦 Bewässerung läuft..." : "✅ Normalbetrieb";
+      data.status === true
+        ? "💦 Bewässerung aktiv..."
+        : "🌱 Bereit / Normalbetrieb";
+
+
+    const isGood =
+    temp >= LIMITS.temp.min && temp <= LIMITS.temp.max &&
+    hum >= LIMITS.hum.min && hum <= LIMITS.hum.max &&
+    lux >= LIMITS.lux.min &&
+    co2 <= LIMITS.co2.max;
+  
+  if (isGood) {
+    chamomile.classList.remove("angry");
+    chamomile.classList.add("happy");
+  } else {
+    chamomile.classList.remove("happy");
+    chamomile.classList.add("angry");
+  }
 
   } catch (e) {
     statusEl.innerText = "❌ Verbindung fehlgeschlagen";
   }
 }
+// async function loadData() {
+//   try {
+//     const res = await fetch(API + "/api/sensor");
+//     const data = await res.json();
+
+//     // UI Update
+//     tempEl.innerText = data.temperature + " °C";
+//     humEl.innerText = data.humidity + " %";
+//     luxEl.innerText = data.lux + " lux";
+//     co2El.innerText = data.co2 + " ppm"
+
+//     // Temperatur
+//     setCardState(
+//       tempCard,
+//       temp >= LIMITS.temp.min && temp <= LIMITS.temp.max
+//     );
+
+//     // Feuchtigkeit
+//     setCardState(
+//       humCard,
+//       hum >= LIMITS.hum.min && hum <= LIMITS.hum.max
+//     );
+
+//     // Licht
+//     setCardState(
+//       luxCard,
+//       lux >= LIMITS.lux.min
+//     );
+
+//     // CO2
+//     setCardState(
+//       co2Card,
+//       co2 <= LIMITS.co2.max
+//     );
+
+//     // if (data.co2 < 800) {
+//     //   co2El.style.color = "lightgreen";
+//     // }
+//     // else if (data.co2 < 1500) {
+//     //   co2El.style.color = "orange";
+//     // }
+//     // else {
+//     //   co2El.style.color = "red";
+//     // }
+
+//     // Status Anzeige
+//     // statusEl.innerText =
+//     //   data.status ? "💦 Bewässerung läuft..." : "✅ Normalbetrieb";
+
+//     if (data.status === true) {
+//       statusEl.innerText = "💦 Bewässerung aktiv...";
+//     } else {
+//       statusEl.innerText = "🌱 Bereit / Normalbetrieb";
+//     }
+
+//   } catch (e) {
+//     statusEl.innerText = "❌ Verbindung fehlgeschlagen";
+//   }
+// }
 
 
 /* =========================
@@ -102,182 +224,93 @@ async function loadData() {
 /**
  * Sendet Bewässerungs-Trigger ans Backend
  */
+// async function water() {
+//   try {
+//     await fetch(API + "/api/water", { method: "POST" });
+//     statusEl.innerText = "💦 Bewässerung gestartet!";
+
+//   } catch (e) {
+//     statusEl.innerText = "❌ Fehler beim Gießen";
+//   }
+// }
+
+// async function water() {
+//   try {
+//     statusEl.innerText = "💦 Bewässerung startet...";
+
+//     const res = await fetch(API + "/api/water", {
+//       method: "POST"
+//     });
+
+//     const result = await res.json();
+
+//     statusEl.innerText =
+//       result.message || "💦 Pumpe läuft (4s)";
+
+//     // optional: UI Hinweis nach 4 Sekunden
+//     setTimeout(() => {
+//       statusEl.innerText = "✅ Bewässerung abgeschlossen";
+//     }, 4500);
+
+//   } catch (e) {
+//     console.error(e);
+//     statusEl.innerText = "❌ Fehler beim Gießen";
+//   }
+// }
+
+let wateringLock = false;
+
 async function water() {
+  if (wateringLock) return;
+
+  wateringLock = true;
+  statusEl.innerText = "💦 Bewässerung startet...";
+
   try {
-    await fetch(API + "/api/water", { method: "POST" });
-    statusEl.innerText = "💦 Bewässerung gestartet!";
+    const res = await fetch(API + "/api/water", { method: "POST" });
+    const result = await res.json();
 
-  } catch (e) {
-    statusEl.innerText = "❌ Fehler beim Gießen";
-  }
-}
+    //statusEl.innerText = result.message || "💦 läuft...";
 
-async function togglePump() {
-  try {
-    const response = await fetch(
-      API + "/api/togglePump",
-      {
-        method: "POST"
-      }
-    );
+    statusEl.innerText = "💦 läuft...";
 
-    const result = await response.json();
-
-    if(result.success){
-      statusEl.innerText = "💦 Pumpe umgeschaltet";
-    }
-
-  } catch(e) {
-    statusEl.innerText = "❌ Fehler beim Schalten";
-  }
-}
-
-
-async function togglePump() {
-  try {
-    const response = await fetch(API + "/api/togglePump", {
-      method: "POST"
-    });
-
-    if (!response.ok) {
-      throw new Error("HTTP Error");
-    }
-
-    const result = await response.json();
-
-    statusEl.innerText =
-      result.message || "💦 Pumpe umgeschaltet";
+    setTimeout(() => {
+      statusEl.innerText = "✅ abgeschlossen";
+      wateringLock = false;
+    }, 5000);
 
   } catch (e) {
     console.error(e);
-    statusEl.innerText = "❌ Fehler beim Schalten";
+    
+    statusEl.innerText = "❌ Fehler beim Gießen";
+    wateringLock = false;
   }
 }
 
+
+// async function togglePump() {
+//   try {
+//     const response = await fetch(API + "/api/togglePump", {
+//       method: "POST"
+//     });
+
+//     if (!response.ok) {
+//       throw new Error("HTTP Error");
+//     }
+
+//     const result = await response.json();
+
+//     statusEl.innerText =
+//       result.message || "💦 Pumpe umgeschaltet";
+
+//   } catch (e) {
+//     console.error(e);
+//     statusEl.innerText = "❌ Fehler beim Schalten";
+//   }
+// }
+
 // Button Event
 waterBtn.addEventListener("click", water);
-
-
-/* =========================
-    MODAL / STATISTICS
-========================= */
-
-let chartTemp, chartHum, chartLux;
-
-/**
- * Öffnet Statistik Modal + lädt Daten
- */
-statsBtn.addEventListener("click", async () => {
-  modal.style.display = "block";
-  await loadStats();
-});
-
-/**
- * Modal schließen (X)
- */
-closeModal.onclick = () => modal.style.display = "none";
-
-/**
- * Klick außerhalb Modal schließt es
- */
-window.onclick = (e) => {
-  if (e.target === modal) modal.style.display = "none";
-};
-
-
-/* =========================
-    STATISTICS LOADER
-========================= */
-
-/**
- * Lädt Verlauf aus Backend und rendert 3 Charts
- */
-async function loadStats() {
-  const res = await fetch(API + "/api/history");
-  const data = await res.json();
-
-  if (!Array.isArray(data) || data.length === 0) return;
-
-  // X-Achse (Zeit)
-  const labels = data.map(d =>
-    new Date(d.time).toLocaleTimeString()
-  );
-
-  // Y-Daten
-  const temp = data.map(d => d.temperature);
-  const hum = data.map(d => d.humidity);
-  const lux = data.map(d => d.lux);
-
-  /* =========================
-      WARNUNGEN CHECK
-  ========================= */
-
-  const latest = data[0];
-  const warnings = checkStatus(latest);
-
-  const warningsBox = document.getElementById("warningsBox");
-
-  warningsBox.innerHTML = warnings.length
-    ? `<p style="color:red;font-weight:bold">⚠️ ${warnings.join(", ")}</p>`
-    : `<p style="color:lightgreen">✅ Alles im optimalen Bereich</p>`;
-
-  /* =========================
-      OLD CHART CLEANUP
-  ========================= */
-
-  if (chartTemp) chartTemp.destroy();
-  if (chartHum) chartHum.destroy();
-  if (chartLux) chartLux.destroy();
-
-  /* =========================
-      TEMPERATURE CHART
-  ========================= */
-
-  chartTemp = new Chart(document.getElementById("chartTemp"), {
-    type: "line",
-    data: {
-      labels,
-      datasets: [{
-        label: "Temp",
-        data: temp,
-        borderColor: "orange",
-        borderWidth: 2
-      }]
-    }
-  });
-
-  /* =========================
-      HUMIDITY CHART
-  ========================= */
-
-  chartHum = new Chart(document.getElementById("chartHum"), {
-    type: "line",
-    data: {
-      labels,
-      datasets: [{
-        label: "Humidity",
-        data: hum,
-        borderColor: "blue"
-      }]
-    }
-  });
-
-  /* =========================
-      LUX CHART
-  ========================= */
-
-  chartLux = new Chart(document.getElementById("chartLux"), {
-    type: "line",
-    data: {
-      labels,
-      datasets: [{
-        label: "Lux",
-        data: lux,
-        borderColor: "yellow"
-      }]
-    }
-  });
-}
 
 
 /* =========================
@@ -309,6 +342,10 @@ function checkStatus(data) {
 
   if (data.lux < LIMITS.lux.min)
     warnings.push("🌑 Zu wenig Licht");
+
+  if (data.co2 > LIMITS.co2.max) {
+    warnings.push("🫁  CO₂ zu hoch")
+  }
 
   return warnings;
 }

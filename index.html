@@ -29,52 +29,39 @@
     <div id="lux" class="value">--</div>
   </div>
 
+  <div class="card">
+    <h3>🫁 CO₂</h3>
+    <div id="co2" class="value">--</div>
+  </div>
+
 </div>
 
 <button id="waterBtn">💦 Gießen</button>
 
 <div id="status" class="status"></div>
 
-<button id="statsBtn">📊 Statistik</button>
+<div class="plant-wrapper">
+  <svg id="chamomile" viewBox="0 0 200 200" class="plant happy">
 
-<button id="pumpBtn">
-  🔄 Pumpe umschalten
-</button>
+    <!-- Topf -->
+    <rect x="70" y="120" width="60" height="50" rx="10" class="pot"/>
 
-<!-- Modal -->
-<div id="modal" class="modal">
-  <div class="modal-content">
+    <!-- Stiel -->
+    <rect x="95" y="60" width="10" height="70" class="stem"/>
 
-    <span id="closeModal">&times;</span>
+    <!-- Blume -->
+    <circle cx="100" cy="50" r="20" class="flower"/>
 
-    <h2>📊 Pflanzen Statistik</h2>
+    <!-- Gesicht -->
+    <circle cx="92" cy="48" r="3" class="eye"/>
+    <circle cx="108" cy="48" r="3" class="eye"/>
+    <path id="mouth" d="M90 58 Q100 65 110 58" class="mouth"/>
 
-    <div class="charts-grid">
-
-      <div class="chart-card">
-        <h3>🌡 Temperatur</h3>
-        <canvas id="chartTemp"></canvas>
-      </div>
-
-      <div class="chart-card">
-        <h3>💧 Feuchtigkeit</h3>
-        <canvas id="chartHum"></canvas>
-      </div>
-
-      <div class="chart-card">
-        <h3>☀️ Licht</h3>
-        <canvas id="chartLux"></canvas>
-      </div>
-
-    </div>
-
-    <div id="warningsBox"></div>
-  </div>
+  </svg>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
-<script src="app.js"></script>
+<script src="app.js">
+  
+</script>
 
 </body>
 </html>
