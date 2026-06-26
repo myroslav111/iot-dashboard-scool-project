@@ -3,8 +3,8 @@
 ========================= */
 
 // Backend API (Node-RED)
-const API = "http://localhost:1880";
-//const API = "http://172.30.120.166:1880";
+//const API = "http://localhost:1880";
+const API = "http://172.30.135.119:1880";
 
 // Grenzwerte für Pflanzenzustand
 const LIMITS = {
